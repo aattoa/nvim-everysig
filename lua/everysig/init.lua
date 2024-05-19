@@ -1,3 +1,19 @@
+local M = {}
+
+M.configuration = {
+    number = nil, ---@type boolean?
+}
+
+---@type fun(number: integer): string
+local function signature_number_comment(number)
+    local comment = vim.bo.commentstring
+    if M.configuration.number and #comment ~= 0 then
+        return ' ' .. comment:format(number)
+    else
+        return ""
+    end
+end
+
 ---@type fun(documentation: table?): string[]
 local function documentation_lines(documentation)
     if not documentation then return {} end
@@ -12,7 +28,7 @@ local function markdown_for_signature_list(signatures)
         table.insert(labels, #lines + 1)
 
         table.insert(lines, "```" .. vim.bo.filetype)
-        table.insert(lines, signature.label)
+        table.insert(lines, signature.label .. signature_number_comment(index))
         table.insert(lines, "```")
 
         for _, line in ipairs(documentation_lines(signature.documentation)) do
@@ -37,8 +53,6 @@ local function set_active_parameter_highlights(buffer, active_parameter, signatu
     end
 end
 
-local M = {}
-
 ---@type fun(err?: lsp.ResponseError, result: any, context: lsp.HandlerContext, config?: table): integer?, integer?
 M.signature_help_handler = function (_, result, context, config)
     config = config or {}
@@ -55,12 +69,14 @@ end
 
 ---@class EverysigOptions
 ---@field override boolean? Whether to override the default signature help handler.
+---@field number boolean? Whether to number signatures.
 
 ---@param options EverysigOptions
 M.setup = function (options)
     if options.override then
         vim.lsp.handlers["textDocument/signatureHelp"] = M.signature_help_handler
     end
+    M.configuration.number = options.number
 end
 
 return M
