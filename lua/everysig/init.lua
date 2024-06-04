@@ -6,11 +6,12 @@ M.configuration = {
 
 ---@type fun(number: integer): string
 local function signature_number_comment(number)
-    local comment = vim.bo.commentstring
-    if M.configuration.number and #comment ~= 0 then
-        return ' ' .. comment:format(number)
-    else
+    if not M.configuration.number then
         return ""
+    elseif #vim.bo.commentstring ~= 0 then
+        return ' ' .. vim.bo.commentstring:format(number)
+    else
+        return string.format(" (%s)", number)
     end
 end
 
