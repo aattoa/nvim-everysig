@@ -67,12 +67,13 @@ M.signature_help_handler = function (_, result, context, config)
     end
 end
 
----@class EverysigOptions
+---@class EverysigSetupOptions
 ---@field override boolean? Whether to override the default signature help handler.
 ---@field number boolean? Whether to number signatures.
 
----@param options EverysigOptions
+---@param options EverysigSetupOptions?
 M.setup = function (options)
+    options = options or {}
     if options.override then
         vim.lsp.handlers["textDocument/signatureHelp"] = M.signature_help_handler
     end
