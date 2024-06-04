@@ -14,13 +14,6 @@ local function signature_number_comment(number)
     end
 end
 
----@type fun(documentation: table?): string[]
-local function documentation_lines(documentation)
-    if not documentation then return {} end
-    assert(documentation.kind == "markdown") -- TODO
-    return vim.lsp.util.convert_input_to_markdown_lines(documentation.value)
-end
-
 ---@type fun(signatures: table[]): string[], integer[]
 local function markdown_for_signature_list(signatures)
     local lines, labels = {}, {}
@@ -31,10 +24,9 @@ local function markdown_for_signature_list(signatures)
         table.insert(lines, signature.label .. signature_number_comment(index))
         table.insert(lines, "```")
 
-        for _, line in ipairs(documentation_lines(signature.documentation)) do
-            table.insert(lines, line)
+        if signature.documentation then
+            vim.lsp.util.convert_input_to_markdown_lines(signature.documentation, lines)
         end
-
         if index ~= #signatures then
             table.insert(lines, "---")
         end
