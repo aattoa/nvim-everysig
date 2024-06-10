@@ -2,6 +2,20 @@
 
 A tiny neovim plugin that provides an alternate [`textDocument/signatureHelp`](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#textDocument_signatureHelp) request handler that displays every signature returned by the language server.
 
+## Screenshots
+
+![Every signature visible](screenshots/read-1.png)
+
+![Only viable signature visible](screenshots/read-2.png)
+
+![Numbered signatures](screenshots/read-numbered.png)
+
+![C++23 `std::print`](screenshots/print.png)
+
+### Regarding empty lines
+
+With `nvim 0.10`, each signature is surrounded by empty lines. This should be fixed when [vertical conceal](https://github.com/neovim/neovim/issues/25718) is implemented.
+
 ## Optional setup
 
 ```lua
