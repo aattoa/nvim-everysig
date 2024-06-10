@@ -4,6 +4,8 @@ A tiny neovim plugin that provides an alternate [`textDocument/signatureHelp`](h
 
 This is helpful in languages that support [function overloading](https://en.wikipedia.org/wiki/Function_overloading), such as C++.
 
+This should be usable in any language, as when only one signature is available, the behavior should match the built-in default `vim.lsp.handlers.signature_help`.
+
 ## Screenshots
 
 Every signature visible:
@@ -14,17 +16,13 @@ Only viable signature visible:
 
 ![](screenshots/read-2.png)
 
-Numbered signatures:
+C++23 `std::print` with signature numbering enabled:
 
-![](screenshots/read-numbered.png)
-
-C++23 `std::print`:
-
-![](screenshots/print.png)
+![](screenshots/numbered-print.png)
 
 ### Regarding empty lines
 
-With `nvim 0.10`, each signature is surrounded by empty lines. This should be fixed when [vertical conceal](https://github.com/neovim/neovim/issues/25718) is implemented.
+With neovim `0.10`, signatures are surrounded by empty lines. This should be fixed when [vertical conceal](https://github.com/neovim/neovim/issues/25718) is implemented.
 
 ## Optional setup
 
