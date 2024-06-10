@@ -1,8 +1,6 @@
 local M = {}
 
-M.configuration = {
-    number = nil, ---@type boolean?
-}
+M.configuration = {}
 
 ---@type fun(number: integer): string
 local function signature_number_comment(number)
@@ -67,15 +65,16 @@ M.signature_help_handler = function (_, result, context, config)
     end
 end
 
----@class EverysigSetupOptions
+---@class everysig.SetupOptions
 ---@field override boolean? Whether to override the default signature help handler.
+---@field silent boolean? Whether to silence notifications.
 ---@field number boolean? Whether to number signatures.
 
----@param options EverysigSetupOptions?
+---@param options everysig.SetupOptions?
 M.setup = function (options)
     options = options or {}
     if options.override then
-        vim.lsp.handlers["textDocument/signatureHelp"] = M.signature_help_handler
+        vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(M.signature_help_handler, { silent = options.silent })
     end
     M.configuration.number = options.number
 end
