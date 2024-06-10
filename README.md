@@ -4,13 +4,21 @@ A tiny neovim plugin that provides an alternate [`textDocument/signatureHelp`](h
 
 ## Screenshots
 
-![Every signature visible](screenshots/read-1.png)
+Every signature visible:
 
-![Only viable signature visible](screenshots/read-2.png)
+![](screenshots/read-1.png)
 
-![Numbered signatures](screenshots/read-numbered.png)
+Only viable signature visible:
 
-![C++23 `std::print`](screenshots/print.png)
+![](screenshots/read-2.png)
+
+Numbered signatures:
+
+![](screenshots/read-numbered.png)
+
+C++23 `std::print`:
+
+![](screenshots/print.png)
 
 ### Regarding empty lines
 
@@ -33,8 +41,15 @@ Example plugin spec for [lazy.nvim](https://github.com/folke/lazy.nvim):
 {
     'aattoa/nvim-everysig',
     opts = { override = true },
-    event = 'LspAttach',
+    lazy = true,         -- Lazy-load the plugin ...
+    event = 'LspAttach', -- ... when an LSP client attaches to a buffer.
 }
+```
+
+If overridden, the signature help request is triggered with the usual `vim.lsp.buf.signature_help`. For example, to get signature help with ctrl+space in normal mode and insert mode:
+
+```lua
+vim.keymap.set({ 'n', 'i' }, '<C-Space>', vim.lsp.buf.signature_help)
 ```
 
 ## The handler
