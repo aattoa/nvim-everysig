@@ -37,9 +37,9 @@ end
 local function set_active_parameter_highlights(buffer, window, active_parameter, signatures, labels)
     for index, signature in ipairs(signatures) do
         -- Some servers send the active parameter with the individual signatures.
-        local parameter = 1 + assert(signature.activeParameter or active_parameter) ---@type integer
-        if parameter <= 0 or parameter > #signature.parameters then return end
-        local label = signature.parameters[parameter].label
+        local parameter = signature.activeParameter or active_parameter ---@type integer?
+        if not parameter or parameter < 0 or parameter >= #signature.parameters then return end
+        local label = signature.parameters[parameter + 1].label
         if type(label) == "string" then
             vim.api.nvim_win_call(window, function ()
                 -- An imperfect solution, but anything else would probably be unreasonably difficult.
