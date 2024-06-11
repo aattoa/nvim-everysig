@@ -1,26 +1,23 @@
-local M = {}
-
-M.configuration = {}
-
 ---@type fun(number: integer): string
-local function signature_number_comment(number)
-    if not M.configuration.number then
-        return ""
-    elseif #vim.bo.commentstring ~= 0 then
-        return ' ' .. vim.bo.commentstring:format(number)
+local function signature_index_comment(index)
+    if #vim.bo.commentstring ~= 0 then
+        return vim.bo.commentstring:format(index)
     else
-        return string.format(" (%s)", number)
+        return '(' .. index .. ')'
     end
 end
 
----@type fun(signatures: table[]): string[], integer[]
-local function markdown_for_signature_list(signatures)
+---@type fun(signatures: table[], number: boolean): string[], integer[]
+local function markdown_for_signature_list(signatures, number)
     local lines, labels = {}, {}
+    number = number and #signatures > 1
     for index, signature in ipairs(signatures) do
         table.insert(labels, #lines + 1)
 
+        local suffix = number and (' ' .. signature_index_comment(index))
+
         table.insert(lines, "```" .. vim.bo.filetype)
-        table.insert(lines, signature.label .. signature_number_comment(index))
+        table.insert(lines, signature.label .. (suffix or ''))
         table.insert(lines, "```")
 
         if signature.documentation then
@@ -51,12 +48,14 @@ local function set_active_parameter_highlights(buffer, window, active_parameter,
     end
 end
 
+local M = {}
+
 ---@type fun(err?: lsp.ResponseError, result: any, context: lsp.HandlerContext, config?: table): integer?, integer?
 M.signature_help_handler = function (_, result, context, config)
     config = config or {}
     if result and result.signatures and #result.signatures ~= 0 then
         config.focus_id = context.method -- Focus existing signature help popup if there is one.
-        local markdown, labels = markdown_for_signature_list(result.signatures)
+        local markdown, labels = markdown_for_signature_list(result.signatures, config.number)
         local floatbuffer, floatwindow = vim.lsp.util.open_floating_preview(markdown, "markdown", config)
         set_active_parameter_highlights(floatbuffer, floatwindow, result.activeParameter, result.signatures, labels)
         return floatbuffer, floatwindow
@@ -72,11 +71,9 @@ end
 
 ---@param options everysig.SetupOptions?
 M.setup = function (options)
-    options = options or {}
-    if options.override then
-        vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(M.signature_help_handler, { silent = options.silent })
+    if options and options.override then
+        vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(M.signature_help_handler, options or {})
     end
-    M.configuration.number = options.number
 end
 
 return M
